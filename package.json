@@ -13,6 +13,16 @@
   },
   "author": "HaloKodein",
   "license": "MIT",
+  "homepage": "https://github.com/djskit/core",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/djskit/core"
+  },
+  "keywords": [
+    "djskit", "discordjs",
+    "discord.js", "djskit/core",
+    "@djskit/core", "framework"
+  ],
   "devDependencies": {
     "@types/jest": "^29.5.10",
     "@types/node": "^20.9.0",
