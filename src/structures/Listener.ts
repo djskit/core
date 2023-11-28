@@ -54,6 +54,7 @@ export abstract class Listener<K extends keyof ClientEvents> extends Base {
     ...params: unknown[]
   ): Promise<void> {
     await this._invoke(...params)
+    await this.cache.unload(this)
   }
 
   abstract invoke(

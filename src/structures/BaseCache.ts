@@ -23,17 +23,50 @@ export class BaseCache extends Map<string, Base> {
     this.client = client
   }
 
-  async loadAll() {
+  async loadAll(): Promise<void> {
     await this.loadPath(this.path)
 
-    const promises: Promise<void>[] = []
+    const promises: Promise<Base>[] = []
 
     for (const base of this.values()) {
       promises.push(
-        base.onLoad())
+        this.load(base))
     }
 
     await Promise.all(promises)
+  }
+
+  async load(base: Base): Promise<Base> {
+    await base.onLoad()
+
+    const previous = this.get(base.name)
+
+    if (previous) {
+      await this.unload(previous)
+    }
+
+    this.set(base.name, base)
+
+    return base
+  }
+
+  async unloadAll(): Promise<void> {
+    const promises: Promise<Base>[] = []
+
+    for (const base of this.values()) {
+      promises.push(
+        this.unload(base))
+    }
+
+    await Promise.all(promises)
+  }
+
+  async unload(base: Base): Promise<Base> {
+    await base.onUnload()
+
+    this.delete(base.name)
+
+    return base
   }
 
   async loadPath(_path: string): Promise<BaseCache> {
@@ -53,9 +86,11 @@ export class BaseCache extends Map<string, Base> {
       for await (const ctor of this.preload(path)) {
         const client = this.client
 
-        const base = new ctor({ name, path, client })
+        const base = new ctor({
+          name, path, client, cache: this
+        })
 
-        this.set(base.name, base)
+        await this.load(base)
       }
       
     }
