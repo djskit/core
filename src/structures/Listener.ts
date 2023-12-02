@@ -13,9 +13,9 @@ export abstract class Listener<K extends keyof ClientEvents> extends Base {
 
   constructor(
     options: ListenerOptions,
-    ctx: BaseContext
+    context: BaseContext
   ) {
-    super(ctx)
+    super(context)
 
     this.event = options.event
     this.once = options.once ?? false
@@ -59,6 +59,6 @@ export abstract class Listener<K extends keyof ClientEvents> extends Base {
 
   abstract invoke(
     ...params: K extends keyof ClientEvents ? ClientEvents[K] : unknown[]
-  ): Promise<any>
+  ): Promise<void>
 }
 

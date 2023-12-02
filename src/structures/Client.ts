@@ -1,12 +1,14 @@
 import {
-    ClientOptions,
+    ChatInputCommandInteraction,
+  ClientOptions,
   Client as DClient,
+  ClientEvents as DClientEvents,
   IntentsBitField,
   Partials
 } from 'discord.js'
 
 import { ListenerCache } from '../managers/ListenerCache'
-import { BaseCache } from './'
+import { BaseCache, Command } from './'
 
 function defaultOptions(): ClientOptions {
   return {
@@ -51,6 +53,17 @@ export class Client extends DClient<true> {
     await super.login(token)
 
     return token
+  }
+}
+
+export interface ChatInputCommandPayload {
+  command: Command
+  interaction: ChatInputCommandInteraction
+}
+
+declare module 'discord.js' {
+  interface ClientEvents extends DClientEvents {
+    chatInputCommand: [data: ChatInputCommandPayload]
   }
 }
 
